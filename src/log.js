@@ -131,16 +131,23 @@ function buildTimeStamp(useStardates) {
 
 /**
  * Colorizes CLI output by its loglevel
- * @param  {string}  msg      Text to colorize
+ * @param  {string}  msg      Text to colorize. Allows inline coloring - see example
  * @param  {Boolean} isTstamp Use timestamp, instead of log level color
  * @return {string}           Colorized input string
+ * @see [colors]{@link https://www.npmjs.com/package/colors#text-colors}
+ * @example
+ * // GET in red letters
+ * colorize('Answering / route [c=red]GET[\\c]');
+ * ~> [supported colors]{@link https://www.npmjs.com/package/colors#text-colors}
+ * // works with log level mappings
+ * colorize('Answering / route [c=debug]GET[\\c]');
  */
 function colorize(msg, isTstamp) {
   let color;
   if (isTstamp) {
     color = logLevels.colors['timestamp'];
   } else {
-    let inlineColorRX = /\\c\[(\w+)\](.*)\\\[c\]/g;
+    let inlineColorRX = /\[c\=(\w+)\](.*)\[\\c\]/g;
     let inlineColorMatch;
     if (inlineColorRX.test(msg)) {
       inlineColorRX.lastIndex = 0;
@@ -178,9 +185,9 @@ function buildModuleTag() {
  * Set GLOBALS
  */
 _.mapKeys(logLevels.levels, (value, key) => {
-  let warn = log.default.warn;
+  let info = log.default.info;
   let globalKey = `log${key[0].toUpperCase()}${key.slice(1)}`;
-  warn(`Registering global.${globalKey} -> log.default.${key}`);
+  info(`Registering global.${globalKey} -> log.default.${key}`);
   global[globalKey] = log.default[key];
 });
 
