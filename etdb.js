@@ -1,9 +1,16 @@
 #!/bin/env node
-/* global logWarn logError logDebug */
 'use strict';
+const _ = require('lodash');
+const config = require('./src/config');
+require('./src/log')();
+const mainApp = require('express')();
+const routers = require('./src/routers');
 
-let log = require('./src/log')();
-logWarn('warn test');
-log.warn('direct warn');
-logError('error test');
-logDebug('debug test');
+mainApp.use(_.values(routers));
+mainApp.listen(3000, () => {
+  logSuccess('ETdb API server listening on 3000');
+  logInfo(`Dropping privileges to ${config.uid}:${config.gid}`);
+  process.setgid(config.gid);
+  process.setuid(config.uid);
+  logDebug(`user: ${process.getuid()}, group: ${process.getgid()}`);
+});

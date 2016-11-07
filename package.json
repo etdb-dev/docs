@@ -5,11 +5,14 @@
   "author": "Raphael Beer <raphael.beer@protonmail.com>",
   "license": "MIT",
   "dependencies": {
+    "bluebird": "^3.4.6",
     "colors": "^1.1.2",
     "express": "^4.14.0",
+    "express-promise-router": "^1.1.1",
     "lodash": "^4.16.6",
     "mongoose": "^4.6.6",
     "nconf": "^0.8.4",
+    "redis": "^2.6.3",
     "winston": "^2.3.0"
   },
   "devDependencies": {
@@ -18,7 +21,7 @@
     "mocha": "^3.1.2"
   },
   "engines": {
-    "node": ">=7.0.0",
+    "node": ">=6.9.1",
     "npm": ">=3.10.8"
   },
   "main": "etdb.js",
