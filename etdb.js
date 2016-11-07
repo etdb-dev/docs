@@ -1,8 +1,17 @@
 #!/bin/env node
 'use strict';
+
 const _ = require('lodash');
 const config = require('./src/config');
 require('./src/log')();
+
+if (process.getuid() !== 0) {
+  logError('Missing privileges');
+  logInfo('Please run ETdb as root!');
+  logInfo('ETdb will drop to the privileges of the user and group given in config.json.');
+  process.exit(0);
+}
+
 const mainApp = require('express')();
 const routers = require('./src/routers');
 

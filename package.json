@@ -26,7 +26,7 @@
   },
   "main": "etdb.js",
   "scripts": {
-    "start": "node --harmony_async_await ./etdb.js",
+    "start": "node ./etdb.js",
     "build-docs": "jsdoc --configure .jsdoc -R ./README.md --verbose ./; echo 'Done.'"
   }
 }
