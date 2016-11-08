@@ -49,6 +49,18 @@ let log = {
         name: 'cli-default',
         level: 'debug',
         formatter: formatCLI
+      }),
+      new (winston.transports.File)({
+        name: 'fs-default',
+        level: 'info',
+        colorize: false,
+        filename: './logs/etdb.log',
+        maxsize: 1000000,
+        maxFiles: 7,
+        json: false,
+        tailable: true,
+        zippedArchive: true,
+        formatter: formatFS
       })
     ]
   })
@@ -77,6 +89,7 @@ let log = {
 /**
  * Formating factory for nicer winston CLI output
  * @param  {WinstonFormatOptions} options winston formating options
+ * @return {string}
  * @see [winston readme]{@link https://github.com/winstonjs/winston#custom-log-format}
  * @example
  * formatCLI(options);
@@ -91,6 +104,23 @@ function formatCLI(options) {
   let meta = nodeUtil.inspect(options.meta);
   let message = colorize(hasMeta ? `${options.message} ${meta}` : options.message);
   return `${timestamp} [${label}] - ${level}: ${message}`;
+}
+
+/**
+ * Formating factory for nice winston file system output
+ * @param  {WinstonFormatOptions} options winston formating options
+ * @return {string}
+ * @see [winston readme]{@link https://github.com/winstonjs/winston#custom-log-format}
+ * @example
+ * formatFS(options);
+ * > '[51:56.337] [/path/filename] - debug: debug test'
+ */
+function formatFS(options) {
+  // [ISO-date] [label]
+  let label = buildModuleTag();
+  let level = options.level.slice(0, 1).toUpperCase();
+  let isoDate = (new Date()).toISOString();
+  return `[${isoDate} > ${level} < ${label}]: ${options.message}`;
 }
 
 /**
