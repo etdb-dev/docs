@@ -28,7 +28,7 @@
   },
   "main": "etdb.js",
   "scripts": {
-    "start": "node ./etdb.js",
+    "start": "sudo node ./etdb.js",
     "build-docs": "jsdoc --configure .jsdoc -R ./README.md --verbose ./; echo 'Done.'"
   }
 }
