@@ -1,8 +1,12 @@
-const apiRouter = require('express-promise-router')();
+'use strict';
 
-const authController = require.main.require('./src/controller/api/auth');
-apiRouter.get('/auth', authController.tease);
-apiRouter.get('/auth/*', authController.tease);
-apiRouter.post('/auth/getKey', authController.getKey);
+const apiRouter = require('express-promise-router')();
+const apiController = require.main.require('./src/controller/api');
+const middleware = require.main.require('./src/middleware');
+
+apiRouter.use(middleware.validateToken);
+
+apiRouter.get('/api/v1/', apiController.home);
+apiRouter.get('/api/v1/protected', apiController.protected);
 
 module.exports = apiRouter;

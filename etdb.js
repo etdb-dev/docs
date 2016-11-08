@@ -14,7 +14,9 @@ if (process.getuid() !== 0) {
 
 const mainApp = require('express')();
 const routers = require('./src/routers');
+const bodyParser = require('body-parser');
 
+mainApp.use(bodyParser.json());
 mainApp.use(_.values(routers));
 mainApp.listen(3000, () => {
   logSuccess('ETdb API server listening on 3000');
