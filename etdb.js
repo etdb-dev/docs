@@ -20,7 +20,11 @@ const routers = require('./src/routers');
 const bodyParser = require('body-parser');
 
 mainApp.use(bodyParser.json());
-mainApp.use(_.values(routers));
+let routerKeys = _.keys(routers);
+_.values(routers).forEach((router, idx) => {
+  logVerbose('Registering router: ' + routerKeys[idx]);
+  mainApp.use(router);
+});
 mainApp.listen(3000, () => {
   logSuccess('ETdb API server listening on 3000');
   logInfo(`Dropping privileges to ${config.uid}:${config.gid}`);
