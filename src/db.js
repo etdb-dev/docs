@@ -6,7 +6,8 @@ mongoose.Promise = Promise;
 const config = require.main.require('./src/config');
 
 let db = {
-  connection: null
+  connection: null,
+  user: require('./db/user')
 };
 
 db.connect = () => {

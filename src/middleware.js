@@ -41,9 +41,8 @@ middleware.doBasicAuth = (req, res, next) => {
   } else {
     logSuccess('Credentials accepted');
     Promise.try(() => {
-      db.findOne({ username: userData.name }).then((userDoc) => {
+      db.user.findOne({ username: userData.name }).then((userDoc) => {
         res.locals.tokenPayload = userDoc.getTokenData();
-        console.log(res.locals);
         return next();
       });
     });
