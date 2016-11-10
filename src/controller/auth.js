@@ -22,6 +22,11 @@ authController.getToken = (req, res, next) => {
 };
 
 authController.addUser = (req, res) => {
+  if (!res.locals.tokenPayload.access.manageUsers) {
+    return res.status(401).json({
+      message: 'You don\'t have the permission to add users.'
+    });
+  }
   let data = req.body;
   let user = new User({
     'username': data.username,
@@ -33,7 +38,7 @@ authController.addUser = (req, res) => {
     }
   });
   user.save().then(() => res.json({
-    message: data.username + ' has been createad'
+    message: `${data.username} has been createad`
   })).catch(() => res.status(409).json({
     message: `user (${data.username}) already exists`
   }));

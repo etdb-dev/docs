@@ -48,13 +48,13 @@ const userSchema = mongoose.Schema({
 
 userSchema.methods.validatePassword = function(password) {
   let self = this;
-  return hashPassword(password).then((hash) => {
-    console.log(self.password);
-    console.log(hash);
-    if (self.password === hash) {
+  return Promise.try(() => {
+    return bcrypt.compareSync(password, self.password);
+  }).then((isValid) => {
+    if (isValid) {
       logSuccess('Passwords match');
     } else {
-      throw new Error('Password mismatch!');
+      throw new Error('Passwords mismatch!');
     }
   });
 };
