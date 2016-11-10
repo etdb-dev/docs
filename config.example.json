@@ -1,0 +1,12 @@
+{
+  "uid": "etdb",
+  "gid": "etdb",
+  "stardates": false,
+  "stackTraceLimit": 25,
+  "db": {
+    "host": "127.0.0.1",
+    "port": "27017",
+    "db": "etdb"
+  },
+  "secret": "appWideSecret"
+}
