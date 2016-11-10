@@ -3,6 +3,7 @@
 
 const _ = require('lodash');
 const config = require('./src/config');
+const db = require('./src/db');
 require('./src/log')();
 
 if (process.getuid() !== 0) {
@@ -11,6 +12,8 @@ if (process.getuid() !== 0) {
   logInfo('ETdb will drop to the privileges of the user and group given in config.json.');
   process.exit(0);
 }
+
+db.connect();
 
 const mainApp = require('express')();
 const routers = require('./src/routers');
