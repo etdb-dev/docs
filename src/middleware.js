@@ -2,6 +2,8 @@
 
 const basicAuth = require('basic-auth');
 const jwt = require('jsonwebtoken');
+const Promise = require('bluebird');
+const db = require.main.require('./src/db');
 
 let middleware = {};
 
@@ -38,8 +40,13 @@ middleware.doBasicAuth = (req, res, next) => {
     return failAuthRequest(res);
   } else {
     logSuccess('Credentials accepted');
-    res.locals.user = { name: userData.name };
-    return next();
+    Promise.try(() => {
+      db.findOne({ username: userData.name }).then((userDoc) => {
+        res.locals.tokenPayload = userDoc.getTokenData();
+        console.log(res.locals);
+        return next();
+      });
+    });
   }
 };
 
