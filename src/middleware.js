@@ -13,18 +13,27 @@ middleware.validateToken = (req, res, next) => {
 
   logDebug('Validating token');
   if (token) {
-    jwt.verify(token, 'matokensecret', (err, decoded) => {
-      if (err && err.message === 'invalid token') {
-        logWarn('Received token is invalid. Rejecting');
-        return res.sendStatus(403);
+    jwt.verify(token, 'matokensecret', (err, tokenPayload) => {
+      let msg;
+      if (err) {
+        if (err.name === 'TokenExpiredError') {
+          logWarn('Received expired token. Rejecting');
+          msg = 'Your token has expired.';
+        } else {
+          logWarn('Received token is invalid. Rejecting');
+          msg = 'Your token is invalid.';
+        }
+        return res.status(401).json({
+          message: msg + ' Please authenticate again!'
+        });
       }
-      logSuccess(`Token verifyed (uid=${decoded.user.name})`);
-      req.decoded = decoded;
+      logSuccess(`Token verifyed (uid=${tokenPayload.username})`);
+      req.tokenPayload = tokenPayload;
       next();
     });
   } else {
     logWarn('No token found');
-    res.sendStatus(403);
+    res.sendStatus(401);
   }
 };
 
