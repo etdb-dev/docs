@@ -9,7 +9,7 @@ authController.getToken = (req, res, next) => {
   if (!canAccess(req, res, 'readAPI')) return;
 
   logDebug('Creating token');
-  let tokenData = res.locals.tokenPayload;
+  let tokenData = req.tokenPayload;
   let token = jwt.sign({
     username: tokenData.username,
     access: tokenData.access
