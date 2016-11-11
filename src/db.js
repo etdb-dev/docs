@@ -12,7 +12,7 @@ let db = {
 
 db.connect = () => {
   Promise.try(() => {
-    let cfg = config.db;
+    let cfg = config.get('db');
     mongoose.connect(`mongodb://${cfg.host}:${cfg.port}/${cfg.db}`);
     db.connection = mongoose.connection;
     db.connection.once('open', () => {

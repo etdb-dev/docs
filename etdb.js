@@ -9,7 +9,7 @@ require('./src/log')();
 if (process.getuid() !== 0) {
   logError('Missing privileges');
   logInfo('Please run ETdb as root!');
-  logInfo('ETdb will drop to the privileges of the user and group given in config.json.');
+  logInfo('ETdb will drop to the user and group given in config.json.');
   process.exit(0);
 }
 
@@ -27,8 +27,8 @@ _.values(routers).forEach((router, idx) => {
 });
 mainApp.listen(3000, () => {
   logSuccess('ETdb API server listening on 3000');
-  logInfo(`Dropping privileges to ${config.uid}:${config.gid}`);
-  process.setgid(config.gid);
-  process.setuid(config.uid);
+  logInfo(`Dropping privileges to ${config.get('uid')}:${config.get('gid')}`);
+  process.setgid(config.get('gid'));
+  process.setuid(config.get('uid'));
   logDebug(`user: ${process.getuid()}, group: ${process.getgid()}`);
 });

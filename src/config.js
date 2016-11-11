@@ -1,19 +1,9 @@
 'use strict';
 
-/**
- * Simple config object.
- * Holds config.json and package.json only, for now.
- * Maybe extend with nconf.
- * @module src/config
- */
+const nconf = require('nconf');
 
-/**
- * Parsed content of config.json
- * @type {Object}
- * @property {Object} package Parsed content of package.json
- * @static
- */
-let config = require('../config.json');
-config.package = require('../package.json');
+nconf.argv().env();
+nconf.file('config', process.cwd() + '/config.json');
+nconf.file('package', process.cwd() + '/package.json');
 
-module.exports = config;
+module.exports = nconf;
