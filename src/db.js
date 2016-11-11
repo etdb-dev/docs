@@ -3,6 +3,7 @@
 const Promise = require('bluebird');
 const mongoose = require('mongoose');
 mongoose.Promise = Promise;
+
 const config = require.main.require('./src/config');
 
 let db = {
@@ -11,12 +12,18 @@ let db = {
 };
 
 db.connect = () => {
-  Promise.try(() => {
+  return new Promise((resolve, reject) => {
     let cfg = config.get('db');
-    mongoose.connect(`mongodb://${cfg.host}:${cfg.port}/${cfg.db}`);
-    db.connection = mongoose.connection;
-    db.connection.once('open', () => {
-      return logSuccess('Connection to database established');
+    let uri = `mongodb://${cfg.host}:${cfg.port}/${cfg.db}`;
+    logInfo('Connecting to database');
+    logVerbose(uri);
+    mongoose.connect(uri).then((args) => {
+      db.connection = mongoose.connection;
+      logSuccess('Connection to database established');
+      return resolve();
+    }).catch((err) => {
+      logError('Connection to database failed');
+      return reject(err);
     });
   });
 };
