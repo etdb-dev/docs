@@ -42,28 +42,7 @@ const logLevels = {
 colors.setTheme(logLevels.colors);
 
 let log = {
-  default: new winston.Logger({
-    levels: logLevels.levels,
-    transports: [
-      new (winston.transports.Console)({
-        name: 'cli-default',
-        level: 'debug',
-        formatter: formatCLI
-      }),
-      new (winston.transports.File)({
-        name: 'fs-default',
-        level: 'info',
-        colorize: false,
-        filename: './logs/etdb.log',
-        maxsize: 1000000,
-        maxFiles: 7,
-        json: false,
-        tailable: true,
-        zippedArchive: true,
-        formatter: formatFS
-      })
-    ]
-  })
+  winston: null
 };
 
 /**
@@ -205,26 +184,74 @@ function buildModuleTag() {
   let stack = new Error().stack;
   stack = stack.split('\n').filter((line) => {
     return line.indexOf('buildModuleTag') === -1 &&
-           line.indexOf('formatCLI') === -1;
+           line.indexOf('formatCLI') === -1 &&
+           line.indexOf('formatFS') === -1;
   }).join('\n');
   let fnMatch = stack.match(fnRX);
   return fnMatch ? '/' + (fnMatch[1] || fnMatch[2]) : 'not/found';
 }
 
-/**
- * Set GLOBALS
- */
-_.mapKeys(logLevels.levels, (value, key) => {
-  let info = log.default.info;
-  let globalKey = `log${key[0].toUpperCase()}${key.slice(1)}`;
-  info(`Registering global.${globalKey} -> log.default.${key}`);
-  global[globalKey] = log.default[key];
-});
+let registerGlobals = () => {
+  _.mapKeys(logLevels.levels, (value, key) => {
+    let info = log.winston.info;
+    let globalKey = `log${key[0].toUpperCase()}${key.slice(1)}`;
+    info(`Registering global.${globalKey} -> log.winston.${key}`);
+    global[globalKey] = log.winston[key];
+  });
+};
 
 /**
- * Returns requested or default logger
+ * Returns install- or default logger
  * @param  {?string} logger Name of logger to return
  * @return {module:src/log}
  */
-module.exports = (logger) => logger !== void 0 && log[logger] ?
-                             log[logger] : log['default'];
+module.exports = (install) => {
+  if (install) {
+    log.winston = new winston.Logger({
+      levels: logLevels.levels,
+      transports: [
+        new (winston.transports.Console)({
+          name: 'cli-install',
+          level: 'debug',
+          formatter: formatCLI
+        }),
+        new (winston.transports.File)({
+          name: 'fs-install',
+          level: 'info',
+          colorize: false,
+          filename: './install.log',
+          json: false,
+          tailable: true,
+          formatter: formatFS
+        })
+      ]
+    });
+  } else {
+    if (!log.winston) {
+      log.winston = new winston.Logger({
+        levels: logLevels.levels,
+        transports: [
+          new (winston.transports.Console)({
+            name: 'cli-default',
+            level: 'debug',
+            formatter: formatCLI
+          }),
+          new (winston.transports.File)({
+            name: 'fs-default',
+            level: 'info',
+            colorize: false,
+            filename: './logs/etdb.log',
+            maxsize: 1000000,
+            maxFiles: 7,
+            json: false,
+            tailable: true,
+            zippedArchive: true,
+            formatter: formatFS
+          })
+        ]
+      });
+    }
+  }
+  registerGlobals();
+  return log.winston;
+};
