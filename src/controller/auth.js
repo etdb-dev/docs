@@ -17,7 +17,6 @@ authController.getToken = (req, res, next) => {
     expiresIn: '2h'
   });
   res.json({
-    success: true,
     message: 'Token for evr\'body!',
     token: token
   });
