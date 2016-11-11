@@ -40,6 +40,7 @@ const userSchema = mongoose.Schema({
   username: { type: String, required: true, index: { unique: true } },
   password: { type: String, required: true },
   access: {
+    isAdmin: { type: Boolean, default: false },
     manageUsers: { type: Boolean, default: false },
     readAPI: { type: Boolean, default: true },
     writeAPI: { type: Boolean, default: false }
