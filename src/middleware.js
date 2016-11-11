@@ -48,7 +48,7 @@ middleware.doBasicAuth = (req, res, next) => {
       throw new Error();
     }
     userDoc.validatePassword(pass).then(() => {
-      res.locals.tokenPayload = userDoc.getTokenData();
+      req.tokenPayload = userDoc.getTokenData();
       logSuccess('Credentials accepted');
       return next();
     }).catch((err) => {
