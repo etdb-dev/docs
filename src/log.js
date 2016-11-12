@@ -78,7 +78,7 @@ function formatCLI(options) {
   // _.keys(options).forEach((key) => console.log(` * @property {${typeof options[key]}} ${key}`));
   let hasMeta = Object.keys(options.meta).length > 0;
   let label = buildModuleTag();
-  let timestamp = buildTimeStamp(config.get('stardates'));
+  let timestamp = buildTimeStamp(config.get('stardates') || false);
   let level = colors[options.level](options.level);
   let meta = nodeUtil.inspect(options.meta);
   let message = colorize(hasMeta ? `${options.message} ${meta}` : options.message);
@@ -180,7 +180,7 @@ function colorize(msg, isTstamp) {
 function buildModuleTag() {
   let appDir = path.dirname(require.main.filename);
   let fnRX = new RegExp(`\\(?${appDir}\\/((?!node_modules)(.*))\.js:\\d+:\\d+\\)?`);
-  Error.stackTraceLimit = config.get('stackTraceLimit');
+  Error.stackTraceLimit = config.get('stackTraceLimit') || 25;
   let stack = new Error().stack;
   stack = stack.split('\n').filter((line) => {
     return line.indexOf('buildModuleTag') === -1 &&

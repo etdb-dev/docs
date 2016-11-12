@@ -4,18 +4,78 @@
 const Promise = require('bluebird');
 const prompt = require('prompt');
 prompt.message = '';
+prompt.start();
+
 const colors = require('colors');
 
+const utils = require('./src/utils');
 const config = require('./src/config');
 const db = require('./src/db');
 const User = require('./src/db/user');
 
 require('./src/log')('install');
 
-let addAdminUser = () => {
-  logInfo('Adding admin account:');
-
-  let userPromptSchema = {
+let promptSchemata = {
+  config: {
+    properties: {
+      uid: {
+        name: 'uid',
+        description: colors.yellow('User who\'s privileges the server should run with'),
+        default: config.get('uid') || 'etdb'
+      },
+      gid: {
+        name: 'gid',
+        description: colors.yellow('Usergroup who\'s privileges the server should run with'),
+        default: config.get('gid') || 'etdb'
+      },
+      'db:host': {
+        name: 'dbHost',
+        description: colors.yellow('MongoDB host'),
+        default: config.get('db:host') || '127.0.0.1'
+      },
+      'db:port': {
+        name: 'dbPort',
+        description: colors.yellow('MongoDB port'),
+        default: config.get('db:port') || 27017
+      },
+      'db:db': {
+        name: 'dbDb',
+        description: colors.yellow('MongoDB database name'),
+        default: config.get('db:db') || 'etdb'
+      },
+      'server:host': {
+        name: 'serverHost',
+        description: colors.yellow('Host IP or -address the server should be accessible at'),
+        default: config.get('server:host') || '127.0.0.1'
+      },
+      'server:port': {
+        name: 'serverPort',
+        description: colors.yellow('Port the server should be listening at'),
+        default: config.get('server:port') || 3000
+      }
+    }
+  },
+  secret: {
+    properties: {
+      secret: {
+        name: 'secret',
+        description: colors.yellow('Secret for password and token encryption (blank creates one)'),
+        default: config.get('secret') || '[]'
+      },
+      insurance: {
+        name: 'secretInsurance',
+        description: colors.yellow('Are you sure you want to overwrite your current secret?\n' +
+                     'NOTE: This will invalidate all user passwords and currently ' +
+                     'issued tokens!'),
+        default: 'no',
+        ask: () => {
+          let currentSecret = config.get('secret');
+          return currentSecret !== void 0 && currentSecret !== prompt.history('secret').value;
+        }
+      }
+    }
+  },
+  adminUser: {
     properties: {
       username: {
         name: 'username',
@@ -32,12 +92,39 @@ let addAdminUser = () => {
         replace: '*'
       }
     }
-  };
+  }
+};
 
+let setupConfig = () => {
+  logInfo('Creating/Updating config.json:');
   return new Promise((resolve, reject) => {
-    prompt.start();
-    prompt.get(userPromptSchema, (err, answers) => {
-      if(err) reject(err);
+    prompt.get(promptSchemata.config, (err, answers) => {
+      if (err) return reject(err);
+      for (let key in answers) {
+        config.set(key, answers[key]);
+      }
+      config.save((err) => {
+        if (err) return reject(err);
+        logSuccess('Config saved.');
+        return resolve();
+      });
+    });
+  });
+};
+
+let setupSecret = () => {
+  return new Promise((resolve, reject) => {
+    prompt.get(promptSchemata.secret, (err, answers) => {
+      if (err) return reject(err);
+    });
+  });
+};
+
+let setupAdminUser = () => {
+  logInfo('Adding admin account:');
+  return new Promise((resolve, reject) => {
+    prompt.get(promptSchemata.adminUser, (err, answers) => {
+      if(err) return reject(err);
 
       User.findOne({ 'username': answers.username }).then((candidate) => {
         if (candidate) return reject(`Refusing to overwrite present user ${candidate.username}`);
@@ -63,12 +150,14 @@ let addAdminUser = () => {
   });
 };
 
-db.connect()
+setupConfig()
+//.then(setupSecret)
+.then(db.connect)
 .then(() => {
   logWarn('Removing test account \'bobby\'');
   User.remove({ username: 'bobby' }, () => {});
 })
-.then(addAdminUser)
+.then(setupAdminUser)
 .then(() => {
   logSuccess('All done.');
   logInfo(`Point your browser to http://${config.get('server:host')}:${config.get('server:port')}/help to get started!`);
