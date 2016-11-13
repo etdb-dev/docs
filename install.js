@@ -60,18 +60,7 @@ let promptSchemata = {
       secret: {
         name: 'secret',
         description: colors.yellow('Secret for password and token encryption (blank creates one)'),
-        default: config.get('secret') || '[]'
-      },
-      insurance: {
-        name: 'secretInsurance',
-        description: colors.yellow('Are you sure you want to overwrite your current secret?\n' +
-                     'NOTE: This will invalidate all user passwords and currently ' +
-                     'issued tokens!'),
-        default: 'no',
-        ask: () => {
-          let currentSecret = config.get('secret');
-          return currentSecret !== void 0 && currentSecret !== prompt.history('secret').value;
-        }
+        default: config.get('secret') || ''
       }
     }
   },
@@ -103,11 +92,7 @@ let setupConfig = () => {
       for (let key in answers) {
         config.set(key, answers[key]);
       }
-      config.save((err) => {
-        if (err) return reject(err);
-        logSuccess('Config saved.');
-        return resolve();
-      });
+      resolve();
     });
   });
 };
@@ -116,6 +101,18 @@ let setupSecret = () => {
   return new Promise((resolve, reject) => {
     prompt.get(promptSchemata.secret, (err, answers) => {
       if (err) return reject(err);
+      config.set('secret', answers.secret === '' ? utils.generateUUID() : answers.secret);
+      resolve();
+    });
+  });
+};
+
+let saveConfig = () => {
+  return new Promise((resolve, reject) => {
+    config.save((err) => {
+      if (err) return reject(err);
+      logSuccess('Config saved.');
+      return resolve();
     });
   });
 };
@@ -151,7 +148,8 @@ let setupAdminUser = () => {
 };
 
 setupConfig()
-//.then(setupSecret)
+.then(setupSecret)
+.then(saveConfig)
 .then(db.connect)
 .then(() => {
   logWarn('Removing test account \'bobby\'');
@@ -167,4 +165,3 @@ setupConfig()
   logError('Awww, great; something went wrong here...');
   logError(err);
 }).finally(() => process.exit(0));
-

@@ -6,7 +6,7 @@ let config = {};
 
 config.get = (key) => nconf.get(key);
 config.set = (key, value) => nconf.set(key, value);
-config.save = () => nconf.save('config');
+config.save = (cb) => nconf.save('config', cb);
 
 nconf.argv().env();
 nconf.file('config', process.cwd() + '/config.json');
