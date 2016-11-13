@@ -2,7 +2,9 @@
 
 const basicAuth = require('basic-auth');
 const jwt = require('jsonwebtoken');
-const db = require.main.require('./src/db');
+
+const config = require('./config');
+const db = require('./db');
 
 let middleware = {};
 
@@ -12,7 +14,7 @@ middleware.validateToken = (req, res, next) => {
 
   logDebug('Validating token');
   if (token) {
-    jwt.verify(token, 'matokensecret', (err, tokenPayload) => {
+    jwt.verify(token, config.get('secret'), (err, tokenPayload) => {
       let msg;
       if (err) {
         if (err.name === 'TokenExpiredError') {

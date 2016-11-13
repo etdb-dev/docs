@@ -1,7 +1,9 @@
 'use strict';
 
 const jwt = require('jsonwebtoken');
-const User = require('../db/user.js');
+
+const config = require('../config');
+const User = require('../db/user');
 
 let authController = {};
 
@@ -13,7 +15,7 @@ authController.getToken = (req, res, next) => {
   let token = jwt.sign({
     username: tokenData.username,
     access: tokenData.access
-  }, 'matokensecret', {
+  }, config.get('secret'), {
     expiresIn: '2h'
   });
   res.json({
