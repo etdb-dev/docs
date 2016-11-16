@@ -23,9 +23,9 @@ server.start = () => {
 
     let cfg = config.get('server');
     let port = cfg.port || 3000;
-    let bind = cfg.bind || '127.0.0.1';
-    apiApp.listen(port, bind, () => {
-      logSuccess(`API server listening on ${bind}:${port}`);
+    let host = cfg.host || '127.0.0.1';
+    apiApp.listen(port, host, () => {
+      logSuccess(`API server listening on ${host}:${port}`);
       return resolve();
     });
   });
