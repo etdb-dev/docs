@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
+    "chai-http": "^3.0.0",
     "minami": "^1.1.1",
     "mocha": "^3.1.2"
   },
@@ -31,6 +32,7 @@
   "main": "etdb.js",
   "scripts": {
     "start": "sudo node ./etdb.js",
-    "build-docs": "jsdoc --configure .jsdoc -R ./README.md --verbose ./; echo 'Done.'"
+    "build-docs": "jsdoc --configure .jsdoc -R ./README.md --verbose ./; echo 'Done.'",
+    "test-api": "mocha ./test/api-runner.js --timeout=10000 --bail"
   }
 }
