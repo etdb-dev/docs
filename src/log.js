@@ -193,9 +193,9 @@ function buildModuleTag() {
 
 let registerGlobals = () => {
   _.mapKeys(logLevels.levels, (value, key) => {
-    let info = log.winston.info;
+    let debugLog = log.winston.debug;
     let globalKey = `log${key[0].toUpperCase()}${key.slice(1)}`;
-    info(`Registering global.${globalKey} -> log.winston.${key}`);
+    debugLog(`Registering global.${globalKey} -> log.winston.${key}`);
     global[globalKey] = log.winston[key];
   });
 };
