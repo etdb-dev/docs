@@ -1,6 +1,6 @@
 'use strict';
 
-const authTests = require('./auth');
+const authTests = require('./api/auth');
 const expect = require('chai').expect;
 
 describe('Server', () => {
