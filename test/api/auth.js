@@ -1,4 +1,3 @@
-/* global describe */
 'use strict';
 
 let baseUrl = 'http://127.0.0.1:3000';
@@ -56,13 +55,13 @@ module.exports = () => {
         .send(testingUser)
         .end((err, res) => {
           expect(err).to.be.null;
-          expect(res).to.have.status(200);
+          expect(res).to.have.status(201);
           checkMessage(`${testingUser.username} has been createad`, res.body);
           done();
         });
       });
 
-      it('should respond with 409 when user already exists', (done) => {
+      it('should respond with 409, when user already exists', (done) => {
         chai.request(baseUrl)
         .post('/auth')
         .auth('bobby', 'bobby')
