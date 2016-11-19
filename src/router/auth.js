@@ -8,5 +8,6 @@ authRouter.use('/auth', middleware.doBasicAuth);
 
 authRouter.get('/auth', authController.getToken);
 authRouter.post('/auth', authController.addUser);
+authRouter.delete('/auth/:uname', authController.deleteUser);
 
 module.exports = authRouter;

@@ -74,5 +74,21 @@ module.exports = () => {
         });
       });
     });
+
+    describe('DELETE', () => {
+
+      it('should deny access, when no credentials are given', testAccessDenial);
+
+      it('should delete a user', (done) => {
+        chai.request(baseUrl)
+        .delete('/auth/' + testingUser.username)
+        .auth('bobby', 'bobby')
+        .end((err, res) => {
+          expect(err).to.be.null;
+          expect(res).to.have.status(200);
+          done();
+        });
+      });
+    });
   });
 };

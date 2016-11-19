@@ -44,12 +44,26 @@ authController.addUser = (req, res) => {
   user.save().then(() => {
     let msg = `${data.username} has been createad`;
     logSuccess(msg + ' by ' + tokenData.username);
-    res.json({
+    res.status(201).json({
       message: `${data.username} has been createad`
     });
   }).catch(() => res.status(409).json({
     message: `user (${data.username}) already exists`
   }));
+};
+
+authController.deleteUser = (req, res) => {
+  if (!canAccess(req, res, 'manageUsers')) return;
+
+  User.findOneAndRemove({ username: req.params.uname }).then(() => {
+    logSuccess(`${req.params.uname} has been deleted`);
+    res.json({
+      message: `${req.params.uname} has been deleted`
+    });
+  }).catch((err) => {
+    console.log(err);
+    res.sendStatus(404);
+  });
 };
 
 let canAccess = (req, res, accessType) => {
