@@ -74,7 +74,8 @@ module.exports = () => {
         });
       });
     });
-
+  });
+  describe('/auth/:user', () => {
     describe('DELETE', () => {
 
       it('should deny access, when no credentials are given', testAccessDenial);
@@ -86,6 +87,18 @@ module.exports = () => {
         .end((err, res) => {
           expect(err).to.be.null;
           expect(res).to.have.status(200);
+          checkMessage(`${testingUser.username} has been deleted`, res.body);
+          done();
+        });
+      });
+
+      it('should respond with 404, when user is not found', (done) => {
+        chai.request(baseUrl)
+        .delete('/auth/' + testingUser.username)
+        .auth('bobby', 'bobby')
+        .end((err, res) => {
+          expect(err).to.not.be.null;
+          expect(res).to.have.status(404);
           done();
         });
       });

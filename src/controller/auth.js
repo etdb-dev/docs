@@ -55,18 +55,23 @@ authController.addUser = (req, res) => {
 authController.deleteUser = (req, res) => {
   if (!canAccess(req, res, 'manageUsers')) return;
 
-  User.findOneAndRemove({ username: req.params.uname }).then(() => {
-    logSuccess(`${req.params.uname} has been deleted`);
-    res.json({
-      message: `${req.params.uname} has been deleted`
-    });
-  }).catch((err) => {
-    console.log(err);
-    res.sendStatus(404);
+  User.findOneAndRemove({ username: req.params.uname }).then((deletedDoc) => {
+    if (!deletedDoc) {
+      logWarn(`User (uid=${req.params.uname}) not found`);
+      res.sendStatus(404);
+    } else {
+      logSuccess(`${req.params.uname} has been deleted`);
+      res.json({
+        message: `${req.params.uname} has been deleted`
+      });
+    }
   });
 };
 
 let canAccess = (req, res, accessType) => {
+  // Even though all /auth routes rely on Basic Auth,
+  // req.tokenPayload is populated!
+  // see: module:middleware.doBasicAuth
   let access = req.tokenPayload.access;
   if (access['isAdmin'] || access[accessType]) {
     return true;
