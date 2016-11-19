@@ -33,6 +33,6 @@
   "scripts": {
     "start": "sudo node ./etdb.js",
     "build-docs": "jsdoc --configure .jsdoc -R ./README.md --verbose ./; echo 'Done.'",
-    "test-api": "mocha ./test/api-runner.js --timeout=10000 --bail"
+    "test-api": "mocha ./test/api-runner.js --timeout=10000"
   }
 }
