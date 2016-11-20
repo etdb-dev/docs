@@ -75,7 +75,26 @@ module.exports = () => {
       });
     });
   });
+
   describe('/auth/:user', () => {
+    describe('PUT', () => {
+
+      it('should deny access, when no credentials are given', testAccessDenial);
+
+      it('should update a user\'s password', (done) => {
+        chai.request(baseUrl)
+        .put('/auth/' + testingUser.username)
+        .auth('bobby', 'bobby')
+        .send({ password: testingUser.password })
+        .end((err, res) => {
+          expect(err).to.be.null;
+          expect(res).to.have.status(200);
+          checkMessage(`Password for ${testingUser.username} has been updated`, res.body);
+          done();
+        });
+      });
+    });
+
     describe('DELETE', () => {
 
       it('should deny access, when no credentials are given', testAccessDenial);

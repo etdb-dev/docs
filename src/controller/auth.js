@@ -44,9 +44,7 @@ authController.addUser = (req, res) => {
   user.save().then(() => {
     let msg = `${data.username} has been createad`;
     logSuccess(msg + ' by ' + tokenData.username);
-    res.status(201).json({
-      message: `${data.username} has been createad`
-    });
+    res.status(201).json({ message: msg });
   }).catch(() => res.status(409).json({
     message: `user (${data.username}) already exists`
   }));
@@ -60,11 +58,21 @@ authController.deleteUser = (req, res) => {
       logWarn(`User (uid=${req.params.uname}) not found`);
       res.sendStatus(404);
     } else {
-      logSuccess(`${req.params.uname} has been deleted`);
-      res.json({
-        message: `${req.params.uname} has been deleted`
-      });
+      let msg = `${deletedDoc.username} has been deleted`;
+      logSuccess(msg);
+      res.json({ message: msg });
     }
+  });
+};
+
+authController.updateUser = (req, res) => {
+  if (!canAccess(req, res, 'manageUsers')) return;
+
+  User.findOneAndUpdate({ username: req.params.uname }, { password: req.body.password })
+  .then((updatedDoc) => {
+    let msg = `Password for ${updatedDoc.username} has been updated`;
+    logSuccess(msg);
+    res.json({ message: msg });
   });
 };
 
