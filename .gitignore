@@ -1,4 +1,4 @@
-docs/etdb/
+docs/
 logs/
 node_modules/
 *.log*
