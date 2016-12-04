@@ -85,4 +85,15 @@ authController.updateUser = (req, res) => {
   }, 'manageUsers');
 };
 
+authController.listUsers = (req, res) => {
+  mw.canAccess(req, res, () => {
+    User.find({}, {_id: 0, username: 1, access: 1 }).then((docs) => {
+      res.json({
+        msg: 'Userlist',
+        users: docs
+      });
+    });
+  }, 'manageUsers');
+};
+
 module.exports = authController;

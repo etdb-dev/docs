@@ -7,6 +7,7 @@ const middleware = require('../middleware');
 authRouter.use('/auth', middleware.doBasicAuth);
 
 authRouter.get('/auth', authController.getToken);
+authRouter.get('/auth/users', authController.listUsers);
 authRouter.post('/auth', authController.addUser);
 authRouter.put('/auth/:uname', authController.updateUser);
 authRouter.delete('/auth/:uname', authController.deleteUser);
