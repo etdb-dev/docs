@@ -1,12 +1,17 @@
 'use strict';
 
 const jwt = require('jsonwebtoken');
+const _ = require('lodash');
 
 const config = require('../config');
 const mw = require('../middleware');
 const User = require('../db/user');
 
-let authController = {};
+let authController = {
+  accessDefaults: {
+    'test': true
+  }
+};
 
 authController.getToken = (req, res, next) => {
   mw.canAccess(req, res, () => {
@@ -38,7 +43,8 @@ authController.addUser = (req, res) => {
 
     let user = new User({
       'username': data.username,
-      'password': data.password
+      'password': data.password,
+      'access': _.assign(authController.accessDefaults, data.access || {})
     });
 
     user.save().then(() => {
@@ -48,7 +54,7 @@ authController.addUser = (req, res) => {
     }).catch(() => res.status(409).json({
       message: `user (${data.username}) already exists`
     }));
-  }, 'readAPI');
+  }, 'manageUsers');
 };
 
 authController.deleteUser = (req, res) => {
@@ -68,9 +74,11 @@ authController.deleteUser = (req, res) => {
 
 authController.updateUser = (req, res) => {
   mw.canAccess(req, res, () => {
-    User.findOneAndUpdate({ username: req.params.uname }, { password: req.body.password })
-    .then((updatedDoc) => {
-      let msg = `Password for ${updatedDoc.username} has been updated`;
+    User.findOneAndUpdate({ username: req.params.uname }, {
+      password: req.body.password,
+      access: _.assign(authController.accessDefaults, req.body.access || {})
+    }).then((updatedDoc) => {
+      let msg = `${updatedDoc.username} has been updated`;
       logSuccess(msg);
       res.json({ message: msg });
     });

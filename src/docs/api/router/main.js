@@ -23,12 +23,17 @@
  * @apiHeaderExample {json} Data for new user
  * {
  *   "username": String,
- *   "password": String
+ *   "password": String,
+ *   "access": Object
  * }
  * @apiExample {curl} Add a new user, providing username and password
  * curl -X POST -H "Authorization: Basic `printf <user>:<pass> | base64`" -H "Content-Type: application/json" -H "Cache-Control: no-cache" -d '{
- * "username": "bobby",
- * "password": "needssomeapi"
+ *   "username": "bobby",
+ *   "password": "needssomeapi",
+ *   "access": {
+ *     "isAdmin": true,
+ *     "writeAPI": false
+ *   }
  * }' "https://api.etdb.de/auth"
  */
 
@@ -41,7 +46,8 @@
  * @apiParam :uname Username of account to edit
  * @apiHeaderExample {json} Userdata for update
  * {
- *   password: String
+ *   password: String,
+ *   access: Object
  * }
  */
 
