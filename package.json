@@ -22,7 +22,7 @@
     "apidoc": "^0.16.1"
   },
   "scripts": {
-    "build-js": "jsdoc --configure .jsdoc -R ./README.md --verbose ./; echo 'Done.'",
+    "build-js": "jsdoc --configure api-server.jsdoc --readme ./api-server/README.md --verbose --recurse ./api-server/src/; echo 'Done.'",
     "build-api": "apidoc -i api-server/api/router -o ./output/api-server/api"
   },
   "main": ""
