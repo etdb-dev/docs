@@ -1,0 +1,29 @@
+{
+  "name": "etdb-docs",
+  "version": "0.1.0",
+  "description": "Documentation (source, generation, output) for ETdb components\"",
+  "author": "Raphael Beer <raphael.beer@protonmail.com> (https://github.com/rbeer/)",
+  "license": "MIT",
+  "homepage": "https://github.com/etdb-dev/docs#readme",
+  "bugs": {
+    "url": "https://github.com/etdb-dev/docs/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/etdb-dev/docs.git"
+  },
+  "keywords": [
+    "ETdb",
+    "documentation",
+    "docs"
+  ],
+  "dependencies": {
+    "minami": "^1.1.1",
+    "apidoc": "^0.16.1"
+  },
+  "scripts": {
+    "build-js": "jsdoc --configure .jsdoc -R ./README.md --verbose ./; echo 'Done.'",
+    "build-api": "apidoc -i api-server/api/router -o ./output/api-server/api"
+  },
+  "main": ""
+}
