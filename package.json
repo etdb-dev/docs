@@ -19,7 +19,9 @@
   ],
   "dependencies": {
     "apidoc": "^0.16.1",
-    "gulp": "^3.9.1",
+    "gulp-apidoc": "^0.2.4",
+    "gulp-clean": "^0.3.2",
+    "gulp-util": "^3.0.8",
     "minami": "^1.1.1"
   },
   "scripts": {
